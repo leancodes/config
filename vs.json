@@ -1,7 +1,7 @@
 {
   "editor.lineHeight": 20,
   "editor.tabSize": 4,
-  "editor.fontLigatures": false,
+  "editor.fontLigatures": true,
   "editor.fontFamily": "Menlo, Consolas",
   "editor.fontSize": 13,
   "editor.wordWrap": "off",
@@ -14,10 +14,10 @@
   "editor.scrollbar.horizontal": "hidden",
   "editor.scrollbar.vertical": "auto",
   "editor.tokenColorCustomizations": {
-    "comments": "#7A7A7A",
+    "comments": "#6A9955",
     "functions": "#1E90FF",
-    "keywords": "#FFFFFF",
-    "strings": "#FFC107",
+    "keywords": "#569CD6",
+    "strings": "#CE9178",
     "numbers": "#2ECC40",
     "variables": "#FFFFFF",
     "types": "#00BCD4",
@@ -25,7 +25,7 @@
       {
         "scope": "comment",
         "settings": {
-          "foreground": "#7A7A7A",
+          "foreground": "#6A9955",
           "fontStyle": "italic"
         }
       },
@@ -44,13 +44,13 @@
       {
         "scope": "keyword.control",
         "settings": {
-          "foreground": "#FFFFFF"
+          "foreground": "#569CD6"
         }
       },
       {
         "scope": "string",
         "settings": {
-          "foreground": "#FFC107"
+          "foreground": "#CE9178"
         }
       },
       {
@@ -98,7 +98,7 @@
       {
         "scope": "keyword.operator",
         "settings": {
-          "foreground": "#FFFFFF"
+          "foreground": "#569CD6"
         }
       },
       {
@@ -225,23 +225,23 @@
     ]
   },
   "workbench.colorCustomizations": {
-    "editor.background": "#0A0A0A",
+    "editor.background": "#202020",
     "editor.foreground": "#FFB107",
-    "editorLineNumber.foreground": "#B0B0B0",
+    "editorLineNumber.foreground": "#646667",
     "editorLineNumber.activeForeground": "#FFFFFF",
-    "editor.selectionBackground": "#424242",
-    "editorCursor.foreground": "#1E90FF",
+    "editor.selectionBackground": "#353f40",
+    "editorCursor.foreground": "#4dc7f9",
     "editorBracketMatch.background": "#42424280",
     "editorBracketMatch.border": "#FFB107",
-    "minimap.background": "#0A0A0A80",
-    "activityBar.background": "#0A0A0A",
-    "sideBar.background": "#0A0A0A",
-    "statusBar.background": "#0A0A0A",
+    "minimap.background": "#202020",
+    "activityBar.background": "#202020",
+    "sideBar.background": "#202020",
+    "statusBar.background": "#202020",
     "statusBar.foreground": "#FFB107",
-    "terminal.background": "#0A0A0A",
+    "terminal.background": "#202020",
     "terminal.foreground": "#FFB107",
-    "terminalCursor.foreground": "#1E90FF",
-    "terminal.ansiBlack": "#0A0A0A",
+    "terminalCursor.foreground": "#4dc7f9",
+    "terminal.ansiBlack": "#202020",
     "terminal.ansiRed": "#FF4136",
     "terminal.ansiGreen": "#2ECC40",
     "terminal.ansiYellow": "#FFB107",
