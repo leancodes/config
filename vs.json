@@ -5,6 +5,7 @@
   "editor.fontFamily": "Consolas",
   // "editor.fontFamily": "Menlo",
   "editor.letterSpacing": 0.69,
+  "editor.cursorWidth": 2,
   "editor.fontSize": 13,
   "editor.wordWrap": "off",
   "editor.minimap.enabled": true,
