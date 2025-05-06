@@ -1,0 +1,126 @@
+{
+  "ctor": {
+    "prefix": "ctor",
+    "body": [
+      "Private Sub Class_Initialize()",
+      "  ${1:' Initialize fields, dependencies, etc.}",
+      "End Sub",
+      "",
+      "Private Sub Class_Terminate()",
+      "  ${2:' Cleanup, release objects if needed}",
+      "End Sub"
+    ],
+    "description": "Class constructor and destructor"
+  },
+
+  "errwrap": {
+    "prefix": "errwrap",
+    "body": [
+      "Function WrapError(ByVal fnName As String, ByVal block As String) As Boolean",
+      "  On Error GoTo errh",
+      "  Application.VBE.ActiveVBProject.VBComponents(fnName).CodeModule.InsertLines 1, block",
+      "  WrapError = True",
+      "  Exit Function",
+      "errh:",
+      "  Debug.Print \"[\" & fnName & \"] \" & Err.Number & \": \" & Err.Description",
+      "  WrapError = False",
+      "End Function"
+    ],
+    "description": "Reusable error execution wrapper"
+  },
+
+  "assert": {
+    "prefix": "assert",
+    "body": [
+      "Sub AssertEquals(ByVal expected As Variant, ByVal actual As Variant, ByVal msg As String)",
+      "  If expected <> actual Then",
+      "    Debug.Print \"ASSERT FAILED: \" & msg & \" | Expected: \" & expected & \", Got: \" & actual",
+      "  Else",
+      "    Debug.Print \"PASS: \" & msg",
+      "  End If",
+      "End Sub"
+    ],
+    "description": "Manual assertion for testing"
+  },
+
+  "enum": {
+    "prefix": "enum",
+    "body": [
+      "Enum ${1:EnumName}",
+      "  ${2:Value1} = ${3:0}",
+      "  ${4:Value2}",
+      "  ${5:Value3}",
+      "End Enum"
+    ],
+    "description": "Enum declaration block"
+  },
+
+  "rangefor": {
+    "prefix": "rangefor",
+    "body": [
+      "Dim ${1:cell} As Range",
+      "For Each ${1} In ${2:Sheet1.Range(\"A1:A10\")}",
+      "  ${3:'...}",
+      "Next ${1}"
+    ],
+    "description": "Excel Range For Each loop"
+  },
+
+  "dictloop": {
+    "prefix": "dictloop",
+    "body": [
+      "Dim ${1:key} As Variant",
+      "For Each ${1} In ${2:myDict}.Keys",
+      "  Debug.Print ${1}, ${2}.Item(${1})",
+      "Next ${1}"
+    ],
+    "description": "Loop over Scripting.Dictionary keys"
+  },
+
+  "fileread": {
+    "prefix": "fileread",
+    "body": [
+      "Dim fso As Object, ts As Object",
+      "Set fso = CreateObject(\"Scripting.FileSystemObject\")",
+      "Set ts = fso.OpenTextFile(\"${1:filepath}\", 1)",
+      "Dim content As String",
+      "content = ts.ReadAll",
+      "ts.Close"
+    ],
+    "description": "Read full file into string (FSO)"
+  },
+
+  "jsonparse": {
+    "prefix": "jsonparse",
+    "body": [
+      "Dim json As Object",
+      "Set json = JsonConverter.ParseJson(${1:jsonString})",
+      "${2:' Use json(\"key\") to access }"
+    ],
+    "description": "Parse JSON string into dictionary (requires VBA-JSON)"
+  },
+
+  "mock": {
+    "prefix": "mock",
+    "body": [
+      "Sub ${1:MockedSub}()",
+      "  Debug.Print \"[Mocked] ${1} called\"",
+      "End Sub"
+    ],
+    "description": "Stub/mock sub for testing"
+  },
+
+  "testa": {
+    "prefix": "testa",
+    "body": [
+      "Sub Test_${1:Func}()",
+      "  Dim actual As Variant",
+      "  Dim expected As Variant",
+      "  expected = ${2:Expected}",
+      "  actual = ${1}(${3:Args})",
+      "  Call AssertEquals(expected, actual, \"${1}\")",
+      "End Sub"
+    ],
+    "description": "Test wrapper with assert"
+  }
+}
