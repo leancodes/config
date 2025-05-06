@@ -1,0 +1,212 @@
+{
+  // === MODULE HEADER ===
+  "modhdr": {
+    "prefix": "modhdr",
+    "description": "Module-level comment",
+    "body": [
+      "// === ${1:ModuleName} ===",
+      "// Purpose: ${2:What it does}",
+      "// Author: ${3:You}",
+      "// Date: ${4:`date`}"
+    ]
+  },
+
+  // === LET BLOCK ===
+  "letin": {
+    "prefix": "letin",
+    "description": "Basic let-in block",
+    "body": [
+      "let",
+      "    ${1:name} = ${2:expression}",
+      "in",
+      "    $1"
+    ]
+  },
+
+  // === FUNCTION ===
+  "fn": {
+    "prefix": "fn",
+    "description": "Reusable function definition",
+    "body": [
+      "${1:FunctionName} = (${2:arg}) =>",
+      "let",
+      "    ${3:step} = ${4:transformation}",
+      "in",
+      "    $3"
+    ]
+  },
+
+  // === ERROR HANDLING ===
+  "tryf": {
+    "prefix": "tryf",
+    "description": "Try with fallback",
+    "body": [
+      "try ${1:expr} otherwise ${2:default}"
+    ]
+  },
+
+  "errlog": {
+    "prefix": "errlog",
+    "description": "Trace log on error",
+    "body": [
+      "try ${1:expr} otherwise Error.Record(\"fail\", \"${2:message}\", [ details = ${3:null} ])"
+    ]
+  },
+
+  // === DEBUGGING ===
+  "trace": {
+    "prefix": "trace",
+    "description": "Trace output with label",
+    "body": [
+      "Trace(\"${1:Label}\", ${2:Expression})"
+    ]
+  },
+
+  "dbgout": {
+    "prefix": "dbgout",
+    "description": "Output variable to UI for inspection",
+    "body": [
+      "in",
+      "    ${1:StepToInspect}"
+    ]
+  },
+
+  // === TYPE CHECKING ===
+  "typeis": {
+    "prefix": "typeis",
+    "description": "Check value type",
+    "body": [
+      "if Type.Is(Value.Type(${1:value}), ${2:type}) then ${3:ok} else ${4:error}"
+    ]
+  },
+
+  "typeerr": {
+    "prefix": "typeerr",
+    "description": "Raise if wrong type",
+    "body": [
+      "if not Type.Is(Value.Type(${1:x}), ${2:type}) then error \"Expected ${2}, got \" & Value.Type(${1:x}) else ${1:x}"
+    ]
+  },
+
+  // === COLUMN FILTERING ===
+  "selcols": {
+    "prefix": "selc",
+    "description": "Select specific columns",
+    "body": [
+      "Table.SelectColumns(${1:table}, {${2:\"Col1\", \"Col2\"}})"
+    ]
+  },
+
+  "remnulls": {
+    "prefix": "remn",
+    "description": "Remove rows with nulls in column",
+    "body": [
+      "Table.SelectRows(${1:table}, each [${2:Column}] <> null)"
+    ]
+  },
+
+  "rencols": {
+    "prefix": "renc",
+    "description": "Rename columns",
+    "body": [
+      "Table.RenameColumns(${1:table}, {${2:{\"Old\", \"New\"}}})"
+    ]
+  },
+
+  // === VALUE TRANSFORMS ===
+  "addcol": {
+    "prefix": "addc",
+    "description": "Add new column via expression",
+    "body": [
+      "Table.AddColumn(${1:table}, \"${2:NewCol}\", each ${3:expression})"
+    ]
+  },
+
+  "replval": {
+    "prefix": "repl",
+    "description": "Replace values in column",
+    "body": [
+      "Table.ReplaceValue(",
+      "    ${1:table},",
+      "    ${2:oldVal},",
+      "    ${3:newVal},",
+      "    Replacer.ReplaceValue,",
+      "    {\"${4:Column}\"}",
+      ")"
+    ]
+  },
+
+  // === SCHEMA / TYPE ===
+  "enftype": {
+    "prefix": "enft",
+    "description": "Enforce column types",
+    "body": [
+      "Table.TransformColumnTypes(${1:table}, {",
+      "    {\"${2:Col1}\", ${3:type}},",
+      "    {\"${4:Col2}\", ${5:type}}",
+      "})"
+    ]
+  },
+
+  "valsch": {
+    "prefix": "valsch",
+    "description": "Validate table schema against expected",
+    "body": [
+      "let",
+      "    actualCols = Table.ColumnNames(${1:table}),",
+      "    requiredCols = {${2:\"A\", \"B\"}}",
+      "in",
+      "    if List.Difference(requiredCols, actualCols) = {} then ${1:table}",
+      "    else error \"Missing required columns\""
+    ]
+  },
+
+  // === PIPELINE STRUCTURE ===
+  "pipe": {
+    "prefix": "pipe",
+    "description": "Chained pipeline with steps",
+    "body": [
+      "let",
+      "    src = ${1:Source},",
+      "    step1 = ${2:Table.SelectRows}(src, each ${3:condition}),",
+      "    step2 = ${4:Table.AddColumn}(step1, \"${5:NewCol}\", each ${6:expr})",
+      "in",
+      "    step2"
+    ]
+  },
+
+  "modpipe": {
+    "prefix": "modpipe",
+    "description": "Reusable transformation module",
+    "body": [
+      "let",
+      "    Transform = (input as table) as table =>",
+      "    let",
+      "        step1 = Table.SelectRows(input, each ${1:condition}),",
+      "        step2 = Table.RenameColumns(step1, {${2:{\"Old\", \"New\"}}})",
+      "    in",
+      "        step2",
+      "",
+      "in",
+      "    Transform"
+    ]
+  },
+
+  // === INPUT GUARDS ===
+  "nonnull": {
+    "prefix": "nonnull",
+    "description": "Ensure non-null input",
+    "body": [
+      "if ${1:val} = null then error \"${1:val} must not be null\" else ${1:val}"
+    ]
+  },
+
+  "hascols": {
+    "prefix": "hascol",
+    "description": "Check table has specific column",
+    "body": [
+      "if List.Contains(Table.ColumnNames(${1:table}), \"${2:Col}\") then ${1:table}",
+      "else error \"Missing required column: ${2:Col}\""
+    ]
+  }
+}
