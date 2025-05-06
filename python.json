@@ -1,168 +1,260 @@
 {
+  // === CRASH-SAFE MAIN ===
   "main": {
     "prefix": "main",
+    "description": "Crash-safe main() scaffold",
     "body": [
       "import sys, traceback",
       "",
       "def main():",
       "    try:",
-      "        r = run()",
-      "        print(f\"[RESULT] {r}\")",
+      "        result = run()",
+      "        print(f\"[RESULT] {result}\")",
       "    except Exception as e:",
       "        print(\"[FATAL]\", e)",
       "        traceback.print_exc()",
       "        sys.exit(1)",
       "",
       "def run():",
+      "    $0",
       "    return 0",
       "",
       "if __name__ == \"__main__\":",
       "    main()"
-    ],
-    "description": "Crash-safe main() scaffold"
+    ]
   },
 
-  "log": {
-    "prefix": "log",
+  // === ERROR HANDLING ===
+  "retry": {
+    "prefix": "retry",
+    "description": "Retry with max attempts",
+    "body": [
+      "def retry(fn, max_attempts=3):",
+      "    for attempt in range(max_attempts):",
+      "        try:",
+      "            return fn()",
+      "        except Exception as e:",
+      "            print(f\"[WARN] Attempt {attempt + 1} failed: {e}\")",
+      "    raise RuntimeError(\"Max retry attempts exceeded\")"
+    ]
+  },
+  "xraise": {
+    "prefix": "xraise",
+    "description": "Custom exception class",
+    "body": [
+      "class ${1:MyError}(Exception):",
+      "    def __init__(self, msg):",
+      "        super().__init__(f\"[ERROR] {msg}\")"
+    ]
+  },
+
+  // === LOGGING ===
+  "logconf": {
+    "prefix": "logconf",
+    "description": "Basic logging config",
     "body": [
       "import logging",
       "",
-      "def log(level=logging.INFO):",
-      "    logging.basicConfig(",
-      "        level=level,",
-      "        format=\"%(asctime)s %(levelname)s %(message)s\"",
-      "    )"
-    ],
-    "description": "Minimal logging setup"
+      "logging.basicConfig(",
+      "    level=logging.INFO,",
+      "    format=\"%(asctime)s %(levelname)s %(message)s\"",
+      ")"
+    ]
   },
-
-  "t": {
-    "prefix": "t",
+  "logd": {
+    "prefix": "logd",
+    "description": "Log debug",
     "body": [
-      "from time import perf_counter",
-      "",
-      "class T:",
-      "    def __init__(self, label): self.label = label",
-      "    def __enter__(self): self.start = perf_counter()",
-      "    def __exit__(self, *_):",
-      "        print(f\"[{self.label}] {perf_counter() - self.start:.6f}s\")"
-    ],
-    "description": "Scoped high-resolution timer"
+      "import logging",
+      "logging.debug(\"${1:message}\")"
+    ]
   },
 
+  // === DEBUGGING ===
   "dbg": {
     "prefix": "dbg",
+    "description": "Debug passthrough",
     "body": [
       "def dbg(v, label=\"dbg\"):",
       "    print(f\"[{label}] {v}\")",
       "    return v"
-    ],
-    "description": "Debug value passthrough with label"
+    ]
   },
-
   "ctx": {
     "prefix": "ctx",
+    "description": "Print caller context",
     "body": [
       "import sys",
-      "",
       "def ctx():",
       "    f = sys._getframe(1)",
       "    print(f\"[{f.f_code.co_name}:{f.f_lineno}] {f.f_locals}\")"
-    ],
-    "description": "Caller function + local state snapshot"
+    ]
   },
 
-  "cli": {
-    "prefix": "cli",
+  // === TESTING ===
+  "pytest": {
+    "prefix": "pytest",
+    "description": "Simple test function",
     "body": [
-      "import sys",
-      "",
-      "def cli(i=1, default=0):",
-      "    try: return int(sys.argv[i])",
-      "    except: return default"
-    ],
-    "description": "CLI integer arg with fallback"
+      "def test_${1:func}():",
+      "    assert ${1:func}(${2:input}) == ${3:expected}"
+    ]
   },
-
-  "clif": {
-    "prefix": "clif",
+  "mockpatch": {
+    "prefix": "mockp",
+    "description": "Mock patch usage",
     "body": [
-      "import sys",
+      "from unittest.mock import patch",
       "",
-      "def clif(i=1, default=0.0):",
-      "    try: return float(sys.argv[i])",
-      "    except: return default"
-    ],
-    "description": "CLI float arg with fallback"
+      "with patch(\"${1:module.target}\") as mock:",
+      "    mock.return_value = ${2:value}",
+      "    $0"
+    ]
   },
 
-  "read": {
-    "prefix": "read",
+  // === FILE / JSON ===
+  "readfile": {
+    "prefix": "readf",
+    "description": "Read file text",
     "body": [
       "from pathlib import Path",
       "",
-      "def read(path):",
+      "def read_text(path):",
       "    p = Path(path)",
-      "    if not p.exists(): raise FileNotFoundError(path)",
-      "    return p.read_text(encoding='utf-8')"
-    ],
-    "description": "Strict UTF-8 file read"
+      "    return p.read_text(encoding=\"utf-8\")"
+    ]
   },
-
-  "rj": {
-    "prefix": "rj",
+  "readjson": {
+    "prefix": "readj",
+    "description": "Read + parse JSON",
     "body": [
       "import json",
       "from pathlib import Path",
       "",
-      "def read(path):",
-      "    p = Path(path)",
-      "    if not p.exists(): raise FileNotFoundError(path)",
-      "    return p.read_text(encoding='utf-8')",
-      "",
-      "def readjson(path):",
-      "    return json.loads(read(path))"
-    ],
-    "description": "Read + parse JSON file"
+      "def read_json(path):",
+      "    return json.loads(Path(path).read_text(encoding=\"utf-8\"))"
+    ]
   },
-
-  "npinit": {
-    "prefix": "np",
-    "body": [
-      "import numpy as np",
-      "",
-      "a = np.array([1, 2, 3])",
-      "b = np.ones((3, 3))",
-      "c = np.dot(a, a)",
-      "print(f\"Dot product: {c}\")"
-    ],
-    "description": "Numpy arrays and dot product"
-  },
-
-  "pdinit": {
-    "prefix": "pd",
+  // === PANDAS / NUMPY / ETL ===
+  "pdread": {
+    "prefix": "pdread",
+    "description": "Load CSV into DataFrame",
     "body": [
       "import pandas as pd",
       "",
-      "df = pd.read_csv(\"data.csv\")",
-      "print(df.head())",
+      "df = pd.read_csv(\"${1:data.csv}\")",
+      "print(df.info())",
       "print(df.describe())"
-    ],
-    "description": "Pandas CSV load + describe"
+    ]
+  },
+  "dfclean": {
+    "prefix": "dfclean",
+    "description": "Drop NA and reset index",
+    "body": [
+      "df = df.dropna().reset_index(drop=True)"
+    ]
+  },
+  "npsum": {
+    "prefix": "npsum",
+    "description": "Numpy array and sum",
+    "body": [
+      "import numpy as np",
+      "",
+      "arr = np.array([${1:1, 2, 3}])",
+      "print(arr.sum())"
+    ]
   },
 
-  "sqlconn": {
-    "prefix": "sql",
+  // === INPUT VALIDATION ===
+  "valstr": {
+    "prefix": "valstr",
+    "description": "String non-empty validation",
     "body": [
-      "import sqlite3",
+      "def require_non_empty(s: str, label=\"input\") -> str:",
+      "    if not s.strip():",
+      "        raise ValueError(f\"{label} cannot be empty\")",
+      "    return s"
+    ]
+  },
+  "typecheck": {
+    "prefix": "typechk",
+    "description": "Validate object type",
+    "body": [
+      "def ensure_type(obj, typ):",
+      "    if not isinstance(obj, typ):",
+      "        raise TypeError(f\"Expected {typ}, got {type(obj)}\")"
+    ]
+  },
+
+  // === ARGPARSE CLI ===
+  "argparse": {
+    "prefix": "cliarg",
+    "description": "CLI with argparse",
+    "body": [
+      "import argparse",
       "",
-      "conn = sqlite3.connect(\"db.sqlite3\")",
-      "cur = conn.cursor()",
-      "cur.execute(\"SELECT * FROM table LIMIT 5\")",
-      "rows = cur.fetchall()",
-      "for row in rows: print(row)",
-      "conn.close()"
-    ],
-    "description": "SQLite3 read query"
+      "parser = argparse.ArgumentParser()",
+      "parser.add_argument(\"--${1:flag}\", type=${2:int}, default=${3:0}, help=\"${4:description}\")",
+      "args = parser.parse_args()",
+      "print(args.$1)"
+    ]
+  },
+
+  // === MODULE STRUCTURE / DOCS ===
+  "moddoc": {
+    "prefix": "moddoc",
+    "description": "Module-level docstring",
+    "body": [
+      "\"\"\"",
+      "Module: ${1:name}",
+      "Purpose: ${2:description}",
+      "Author: ${3:Your Name}",
+      "Date: ${4:`date`}",
+      "\"\"\"",
+      "$0"
+    ]
+  },
+  "fdoc": {
+    "prefix": "fdoc",
+    "description": "Function docstring with args and return",
+    "body": [
+      "def ${1:name}(${2:args}):",
+      "    \"\"\"",
+      "    ${3:Summary of function}",
+      "",
+      "    Args:",
+      "        ${2}: ${4:description}",
+      "",
+      "    Returns:",
+      "        ${5:Type}: ${6:description}",
+      "    \"\"\"",
+      "    $0"
+    ]
+  },
+
+  // === DECORATOR PATTERN ===
+  "decwrap": {
+    "prefix": "decwrap",
+    "description": "Generic wrapper decorator",
+    "body": [
+      "def ${1:decorator}(func):",
+      "    def wrapper(*args, **kwargs):",
+      "        print(\"[DEBUG] Entering ${1}\")",
+      "        result = func(*args, **kwargs)",
+      "        print(\"[DEBUG] Exiting ${1}\")",
+      "        return result",
+      "    return wrapper"
+    ]
+  },
+
+  // === INIT STUB ===
+  "init": {
+    "prefix": "init",
+    "description": "__init__.py with relative import guard",
+    "body": [
+      "# __init__.py",
+      "",
+      "__all__ = [\"${1:module}\"]"
+    ]
   }
 }
