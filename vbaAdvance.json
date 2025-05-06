@@ -1,216 +1,266 @@
 {
-  // === PROPERTIES ===
-  "pplet": {
-    "prefix": "pplet",
-    "description": "Property Let/Get with backing field and docstring",
+  // === ERROR HANDLING & DIAGNOSTICS ===
+  "errwrap": {
+    "prefix": "errwrap",
+    "description": "Reusable error wrapper for procedures",
     "body": [
-      "Private m${1:Prop} As ${2:Type}",
-      "Public Property Let $1(ByVal v As $2)",
-      "Attribute $1.VB_Description = \"${3:Description}.\"",
-      "    m$1 = v",
-      "End Property",
-      "",
-      "Public Property Get $1() As $2",
-      "    $1 = m$1",
-      "End Property"
-    ]
-  },
-
-  "ppset": {
-    "prefix": "ppset",
-    "description": "Property Set/Get for object references",
-    "body": [
-      "Private m${1:Prop} As ${2:Type}",
-      "Public Property Set $1(ByVal v As $2)",
-      "Attribute $1.VB_Description = \"${3:Description}.\"",
-      "    Set m$1 = v",
-      "End Property",
-      "",
-      "Public Property Get $1() As $2",
-      "    Set $1 = m$1",
-      "End Property"
-    ]
-  },
-
-  "ppget": {
-    "prefix": "ppget",
-    "description": "Read-only property",
-    "body": [
-      "Public Property Get ${1:Prop}() As ${2:Type}",
-      "Attribute $1.VB_Description = \"${3:Description}.\"",
-      "    $0",
-      "End Property"
-    ]
-  },
-
-  // === PROCEDURES ===
-  "subr": {
-    "prefix": "subr",
-    "description": "Documented Subroutine",
-    "body": [
-      "Option Explicit",
-      "Public Sub ${1:Proc}(${2:args})",
-      "Attribute $1.VB_Description = \"${3:Description}.\"",
-      "    $0",
-      "End Sub"
-    ]
-  },
-
-  "func": {
-    "prefix": "func",
-    "description": "Documented Function",
-    "body": [
-      "Option Explicit",
-      "Public Function ${1:Func}(${2:args}) As ${3:ReturnType}",
-      "Attribute $1.VB_Description = \"${4:Description}.\"",
-      "    Dim result As $3",
-      "    $0",
-      "    $1 = result",
-      "End Function"
-    ]
-  },
-
-  // === ERROR HANDLING ===
-  "tryh": {
-    "prefix": "tryh",
-    "description": "Procedure with error handling block",
-    "body": [
-      "Sub ${1:ProcName}()",
-      "    On Error GoTo errh",
-      "    $0",
+      "On Error GoTo errh",
+      "$0",
       "exith:",
-      "    Exit Sub",
+      "    Exit ${1:Sub}",
       "errh:",
-      "    Debug.Print \"[\" & Err.Number & \"]: \" & Err.Description",
-      "    Resume exith",
-      "End Sub"
+      "    Debug.Print \"[ERR] \" & Err.Number & \": \" & Err.Description",
+      "    Resume exith"
+    ]
+  },
+
+  "tryprop": {
+    "prefix": "tryprop",
+    "description": "Inline property assignment with error catch",
+    "body": [
+      "On Error Resume Next",
+      "${1:object}.${2:property} = ${3:value}",
+      "If Err.Number <> 0 Then",
+      "    Debug.Print \"[WARN] Failed: \" & Err.Description",
+      "    Err.Clear",
+      "End If"
+    ]
+  },
+
+  "logtrace": {
+    "prefix": "logt",
+    "description": "Structured trace log",
+    "body": [
+      "Debug.Print \"TRACE | \" & Now & \" | ${1:ProcName} | \" & ${2:message}"
     ]
   },
 
   // === TESTING ===
-  "assert": {
-    "prefix": "assert",
-    "description": "Basic assertion helper",
+  "testproc": {
+    "prefix": "testp",
+    "description": "Test wrapper procedure with asserts",
     "body": [
-      "Sub AssertEquals(expected As Variant, actual As Variant, msg As String)",
-      "    If expected <> actual Then",
-      "        Debug.Print \"FAIL: \" & msg & \" | Expected: \" & expected & \" Got: \" & actual",
-      "    Else",
-      "        Debug.Print \"PASS: \" & msg",
-      "    End If",
+      "Public Sub Test_${1:ProcName}()",
+      "    On Error GoTo errh",
+      "    Dim result As Variant",
+      "    result = ${1}(${2:args})",
+      "    Call AssertEquals(${3:expected}, result, \"${1} result match\")",
+      "    Exit Sub",
+      "errh:",
+      "    Debug.Print \"Test ${1} failed: \" & Err.Description",
       "End Sub"
     ]
   },
 
-  // === EXCEL SPECIFIC ===
-  "xloopr": {
-    "prefix": "xloopr",
-    "description": "Loop through Excel range",
+  "assertrange": {
+    "prefix": "assrng",
+    "description": "Assert that range value matches expected",
     "body": [
-      "Dim cell As Range",
-      "For Each cell In ${1:Sheet1}.Range(\"${2:A1:A10}\")",
+      "If ${1:Range}.Value <> ${2:Expected} Then",
+      "    Debug.Print \"ASSERT FAIL: \" & ${1:Range}.Address & \" | Got: \" & ${1:Range}.Value",
+      "Else",
+      "    Debug.Print \"PASS: \" & ${1:Range}.Address",
+      "End If"
+    ]
+  },
+
+  // === NAMING AND MODULE HEADER ===
+  "modhdr": {
+    "prefix": "modhdr",
+    "description": "Standard module header",
+    "body": [
+      "' ===== Module: ${1:Name} =====",
+      "' Purpose: ${2:Purpose}",
+      "' Author: ${3:YourName}",
+      "' Date: ${4:`date`}",
+      "Option Explicit",
+      ""
+    ]
+  },
+
+  "clshdr": {
+    "prefix": "clshdr",
+    "description": "Standard class module header",
+    "body": [
+      "' ===== Class: ${1:Name} =====",
+      "' Purpose: ${2:Purpose}",
+      "' Author: ${3:YourName}",
+      "' Date: ${4:`date`}",
+      "Option Explicit",
+      "",
+      "' -- Members",
+      "' -- Methods",
+      "' -- Properties",
+      ""
+    ]
+  },
+  // === EXCEL RANGE / SHEET OPS (ETL) ===
+  "xvalcell": {
+    "prefix": "xval",
+    "description": "Validate a cell has a non-empty value",
+    "body": [
+      "If Trim(${1:cell}.Value) = \"\" Then",
+      "    Debug.Print \"Empty cell: \" & ${1:cell}.Address",
+      "End If"
+    ]
+  },
+
+  "xclear": {
+    "prefix": "xclr",
+    "description": "Clear content and formatting from range",
+    "body": [
+      "${1:Sheet1}.Range(\"${2:A1:D100}\").ClearContents",
+      "${1}.Range(\"$2\").ClearFormats"
+    ]
+  },
+
+  "xdelrow": {
+    "prefix": "xdelr",
+    "description": "Delete row if condition met",
+    "body": [
+      "If ${1:Sheet}.Cells(${2:i}, ${3:col}).Value = \"${4:Target}\" Then",
+      "    ${1:Sheet}.Rows(${2:i}).Delete",
+      "End If"
+    ]
+  },
+
+  "wsloop": {
+    "prefix": "wsloop",
+    "description": "Loop through all worksheets",
+    "body": [
+      "Dim ws As Worksheet",
+      "For Each ws In ThisWorkbook.Worksheets",
       "    $0",
-      "Next cell"
+      "Next ws"
+    ]
+  },
+
+  "rngloop": {
+    "prefix": "rngloop",
+    "description": "Row-wise range iteration",
+    "body": [
+      "Dim r As Range",
+      "For Each r In ${1:Sheet1}.Range(\"${2:A2:A100}\").Cells",
+      "    $0",
+      "Next r"
     ]
   },
 
   // === UTILITIES ===
-  "logm": {
-    "prefix": "logm",
-    "description": "Log message with timestamp",
+  "strclean": {
+    "prefix": "strcln",
+    "description": "Trim + clean string",
     "body": [
-      "Sub Log(msg As String)",
-      "    Debug.Print Now & \" - \" & msg",
-      "End Sub"
+      "Function CleanString(ByVal txt As String) As String",
+      "    CleanString = Trim(Replace(txt, vbCrLf, \" \"))",
+      "End Function"
     ]
   },
 
-  "fread": {
-    "prefix": "fread",
-    "description": "Read entire text file",
+  "rngcopy": {
+    "prefix": "rngcpy",
+    "description": "Copy range between sheets",
     "body": [
-      "Dim fso As Object, ts As Object",
-      "Set fso = CreateObject(\"Scripting.FileSystemObject\")",
-      "Set ts = fso.OpenTextFile(\"${1:path}\", 1)",
-      "Dim content As String",
-      "content = ts.ReadAll",
-      "ts.Close"
+      "${1:Sheet1}.Range(\"${2:A1:D10}\").Copy",
+      "${3:Sheet2}.Range(\"${4:A1}\").PasteSpecial xlPasteValues"
     ]
   },
 
-  // === FLOW CONTROL ===
-  "loopf": {
-    "prefix": "loopf",
-    "description": "Standard For loop",
+  "colwidthauto": {
+    "prefix": "colw",
+    "description": "Auto fit column width",
     "body": [
-      "Dim ${1:i} As Long",
-      "For $1 = ${2:1} To ${3:10}",
-      "    $0",
-      "Next $1"
+      "${1:Sheet}.Columns(\"${2:A:D}\").AutoFit"
     ]
   },
 
-  "loopi": {
-    "prefix": "loopi",
-    "description": "For Each loop",
+  // === DEFENSIVE + MAINTAINABILITY ===
+  "precond": {
+    "prefix": "prechk",
+    "description": "Guard clause for required value",
     "body": [
-      "For Each ${1:item} In ${2:collection}",
-      "    $0",
-      "Next $1"
-    ]
-  },
-
-  "ifb": {
-    "prefix": "ifb",
-    "description": "If block",
-    "body": [
-      "If ${1:condition} Then",
-      "    $0",
+      "If ${1:arg} Is Nothing Then",
+      "    Err.Raise vbObjectError + 1000, , \"${2:Missing required argument: }$1\"",
       "End If"
     ]
   },
 
-  "ifel": {
-    "prefix": "ifel",
-    "description": "If...Else block",
+  "typechk": {
+    "prefix": "typchk",
+    "description": "Type check object before use",
     "body": [
-      "If ${1:condition} Then",
-      "    $0",
-      "Else",
+      "If Not TypeOf ${1:obj} Is ${2:ExpectedType} Then",
+      "    Err.Raise vbObjectError + 1001, , \"Invalid type: Expected ${2}\"",
       "End If"
     ]
   },
 
-  "case": {
-    "prefix": "case",
-    "description": "Select Case",
+  "retry": {
+    "prefix": "retry",
+    "description": "Retry loop with max attempts",
     "body": [
-      "Select Case ${1:expr}",
-      "    Case ${2:val}",
-      "        $0",
-      "    Case Else",
-      "End Select"
+      "Dim attempt As Integer: attempt = 0",
+      "Const maxTries As Integer = ${1:3}",
+      "Do",
+      "    On Error Resume Next",
+      "    ${2:codeToTry}",
+      "    If Err.Number = 0 Then Exit Do",
+      "    Err.Clear: attempt = attempt + 1",
+      "Loop While attempt < maxTries"
+    ]
+  },
+  // === MODULE ORGANIZATION ===
+  "modstart": {
+    "prefix": "modstart",
+    "description": "Start region for module section",
+    "body": [
+      "' === ${1:Section} ==="
     ]
   },
 
-  // === CLASS LIFECYCLE ===
-  "ctor": {
-    "prefix": "ctor",
-    "description": "Class_Initialize",
+  "modend": {
+    "prefix": "modend",
+    "description": "End region comment (foldable)",
     "body": [
-      "Private Sub Class_Initialize()",
-      "    $0",
-      "End Sub"
+      "' === END ${1:Section} ==="
     ]
   },
 
-  "dtor": {
-    "prefix": "dtor",
-    "description": "Class_Terminate",
+  // === INTERFACE DECLARATION STUB ===
+  "iface": {
+    "prefix": "iface",
+    "description": "Declare interface class",
     "body": [
-      "Private Sub Class_Terminate()",
-      "    $0",
-      "End Sub"
+      "' Interface: ${1:IName}",
+      "' Defines contract for...",
+      "Option Explicit"
+    ]
+  },
+
+  // === SHEET UTIL SHORTCUT ===
+  "sheetget": {
+    "prefix": "sheetg",
+    "description": "Get worksheet safely",
+    "body": [
+      "Function GetSheet(name As String) As Worksheet",
+      "    On Error Resume Next",
+      "    Set GetSheet = ThisWorkbook.Worksheets(name)",
+      "    If GetSheet Is Nothing Then Err.Raise vbObjectError + 1002, , \"Sheet not found: \" & name",
+      "End Function"
+    ]
+  },
+
+  // === SHEET EXISTS ===
+  "sheetex": {
+    "prefix": "sheetex",
+    "description": "Check if worksheet exists",
+    "body": [
+      "Function SheetExists(sheetName As String) As Boolean",
+      "    Dim ws As Worksheet",
+      "    On Error Resume Next",
+      "    Set ws = ThisWorkbook.Sheets(sheetName)",
+      "    SheetExists = Not ws Is Nothing",
+      "End Function"
     ]
   }
 }
