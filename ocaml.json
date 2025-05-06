@@ -1,0 +1,229 @@
+{
+  // === MODULE HEADER ===
+  "modhdr": {
+    "prefix": "modhdr",
+    "description": "Module doc header",
+    "body": [
+      "(*",
+      " * Module: ${1:ModuleName}",
+      " * Purpose: ${2:description}",
+      " * Author: ${3:YourName}",
+      " * Date: ${4:`date`}",
+      " *)"
+    ]
+  },
+
+  // === FUNCTION SCAFFOLD ===
+  "fn": {
+    "prefix": "fn",
+    "description": "Named function with curried args",
+    "body": [
+      "let ${1:name} ${2:arg1} ${3:arg2} =",
+      "  $0"
+    ]
+  },
+  "fnrec": {
+    "prefix": "fnrec",
+    "description": "Recursive function",
+    "body": [
+      "let rec ${1:name} ${2:n} =",
+      "  if ${2:n} = 0 then 1 else ${2:n} * ${1:name} (${2:n} - 1)"
+    ]
+  },
+
+  // === LET-IN ===
+  "letin": {
+    "prefix": "letin",
+    "description": "Let binding with in",
+    "body": [
+      "let ${1:x} = ${2:expr} in",
+      "  $0"
+    ]
+  },
+
+  // === DEBUGGING ===
+  "dbg": {
+    "prefix": "dbg",
+    "description": "Debug print expression",
+    "body": [
+      "let () = Printf.printf \"[DEBUG] %s = %s\\n\" \"${1:label}\" (string_of_${2:type} ${3:expr})"
+    ]
+  },
+  "assert": {
+    "prefix": "assert",
+    "description": "Assert with condition",
+    "body": [
+      "assert (${1:condition})"
+    ]
+  },
+
+  // === RESULT / ERROR HANDLING ===
+  "ok": {
+    "prefix": "ok",
+    "description": "Wrap value in Ok",
+    "body": [
+      "Ok(${1:value})"
+    ]
+  },
+  "err": {
+    "prefix": "err",
+    "description": "Wrap error in Error",
+    "body": [
+      "Error(\"${1:message}\")"
+    ]
+  },
+  "matchres": {
+    "prefix": "matchres",
+    "description": "Match result type",
+    "body": [
+      "match ${1:res} with",
+      "| Ok v -> ${2:use v}",
+      "| Error e -> ${3:handle e}"
+    ]
+  },
+
+  // === OPTION SAFETY ===
+  "matchopt": {
+    "prefix": "matchopt",
+    "description": "Match option type",
+    "body": [
+      "match ${1:opt} with",
+      "| Some x -> ${2:use x}",
+      "| None -> ${3:default}"
+    ]
+  },
+
+  "getopt": {
+    "prefix": "getopt",
+    "description": "Option.get with fallback",
+    "body": [
+      "match ${1:opt} with",
+      "| Some x -> x",
+      "| None -> ${2:default}"
+    ]
+  },
+  
+  // === PIPELINE & FUNCTIONAL UTILS ===
+  "pipe": {
+    "prefix": "pipe",
+    "description": "Pipeline operator",
+    "body": [
+      "${1:value} |> ${2:fn}"
+    ]
+  },
+  "maplist": {
+    "prefix": "mapl",
+    "description": "List.map example",
+    "body": [
+      "List.map (fun ${1:x} -> ${2:expr}) ${3:list}"
+    ]
+  },
+  "foldl": {
+    "prefix": "fold",
+    "description": "List.fold_left scaffold",
+    "body": [
+      "List.fold_left (fun ${1:acc} ${2:x} -> ${3:expr}) ${4:init} ${5:list}"
+    ]
+  },
+
+  // === TYPES / RECORDS / VARIANTS ===
+  "record": {
+    "prefix": "recd",
+    "description": "Record type definition",
+    "body": [
+      "type ${1:t} = {",
+      "  ${2:field}: ${3:type};",
+      "  ${4:more}: ${5:type}",
+      "}"
+    ]
+  },
+  "variant": {
+    "prefix": "varnt",
+    "description": "Variant type",
+    "body": [
+      "type ${1:status} =",
+      "  | ${2:Init}",
+      "  | ${3:Running} of ${4:int}",
+      "  | ${5:Error} of string"
+    ]
+  },
+  "matchvar": {
+    "prefix": "matchv",
+    "description": "Match on variant",
+    "body": [
+      "match ${1:value} with",
+      "  | ${2:Init} -> ${3:...}",
+      "  | ${4:Running}(n) -> ${5:...}",
+      "  | ${6:Error}(msg) -> ${7:...}"
+    ]
+  },
+
+  // === MODULES ===
+  "module": {
+    "prefix": "mod",
+    "description": "Define a module",
+    "body": [
+      "module ${1:Name} = struct",
+      "  ${2:let f x = x}",
+      "end"
+    ]
+  },
+  "modsig": {
+    "prefix": "modsig",
+    "description": "Module signature",
+    "body": [
+      "module type ${1:S} = sig",
+      "  val ${2:f} : ${3:int -> int}",
+      "end"
+    ]
+  },
+  "modimpl": {
+    "prefix": "modimpl",
+    "description": "Module with signature",
+    "body": [
+      "module ${1:M} : ${2:S} = struct",
+      "  let ${3:f} x = ${4:x + 1}",
+      "end"
+    ]
+  },
+
+  // === TESTING (ALCOTEST) ===
+  "atest": {
+    "prefix": "atest",
+    "description": "Alcotest test case",
+    "body": [
+      "let test_${1:name} () =",
+      "  Alcotest.(check int) \"${2:label}\" ${3:expected} ${4:actual}"
+    ]
+  },
+  "tsuite": {
+    "prefix": "tsuite",
+    "description": "Alcotest test suite",
+    "body": [
+      "let () =",
+      "  let open Alcotest in",
+      "  run \"${1:SuiteName}\" [",
+      "    \"${2:Group}\", [",
+      "      test_case \"${3:TestName}\" `Quick ${4:test_func}",
+      "    ]",
+      "  ]"
+    ]
+  },
+
+  // === UTILITIES ===
+  "readfile": {
+    "prefix": "readf",
+    "description": "Read file lines",
+    "body": [
+      "let read_lines path =",
+      "  let ic = open_in path in",
+      "  let rec loop acc =",
+      "    try",
+      "      let line = input_line ic in",
+      "      loop (line :: acc)",
+      "    with End_of_file -> close_in ic; List.rev acc",
+      "  in",
+      "  loop []"
+    ]
+  }
+}
