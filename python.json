@@ -1,0 +1,168 @@
+{
+  "main": {
+    "prefix": "main",
+    "body": [
+      "import sys, traceback",
+      "",
+      "def main():",
+      "    try:",
+      "        r = run()",
+      "        print(f\"[RESULT] {r}\")",
+      "    except Exception as e:",
+      "        print(\"[FATAL]\", e)",
+      "        traceback.print_exc()",
+      "        sys.exit(1)",
+      "",
+      "def run():",
+      "    return 0",
+      "",
+      "if __name__ == \"__main__\":",
+      "    main()"
+    ],
+    "description": "Crash-safe main() scaffold"
+  },
+
+  "log": {
+    "prefix": "log",
+    "body": [
+      "import logging",
+      "",
+      "def log(level=logging.INFO):",
+      "    logging.basicConfig(",
+      "        level=level,",
+      "        format=\"%(asctime)s %(levelname)s %(message)s\"",
+      "    )"
+    ],
+    "description": "Minimal logging setup"
+  },
+
+  "t": {
+    "prefix": "t",
+    "body": [
+      "from time import perf_counter",
+      "",
+      "class T:",
+      "    def __init__(self, label): self.label = label",
+      "    def __enter__(self): self.start = perf_counter()",
+      "    def __exit__(self, *_):",
+      "        print(f\"[{self.label}] {perf_counter() - self.start:.6f}s\")"
+    ],
+    "description": "Scoped high-resolution timer"
+  },
+
+  "dbg": {
+    "prefix": "dbg",
+    "body": [
+      "def dbg(v, label=\"dbg\"):",
+      "    print(f\"[{label}] {v}\")",
+      "    return v"
+    ],
+    "description": "Debug value passthrough with label"
+  },
+
+  "ctx": {
+    "prefix": "ctx",
+    "body": [
+      "import sys",
+      "",
+      "def ctx():",
+      "    f = sys._getframe(1)",
+      "    print(f\"[{f.f_code.co_name}:{f.f_lineno}] {f.f_locals}\")"
+    ],
+    "description": "Caller function + local state snapshot"
+  },
+
+  "cli": {
+    "prefix": "cli",
+    "body": [
+      "import sys",
+      "",
+      "def cli(i=1, default=0):",
+      "    try: return int(sys.argv[i])",
+      "    except: return default"
+    ],
+    "description": "CLI integer arg with fallback"
+  },
+
+  "clif": {
+    "prefix": "clif",
+    "body": [
+      "import sys",
+      "",
+      "def clif(i=1, default=0.0):",
+      "    try: return float(sys.argv[i])",
+      "    except: return default"
+    ],
+    "description": "CLI float arg with fallback"
+  },
+
+  "read": {
+    "prefix": "read",
+    "body": [
+      "from pathlib import Path",
+      "",
+      "def read(path):",
+      "    p = Path(path)",
+      "    if not p.exists(): raise FileNotFoundError(path)",
+      "    return p.read_text(encoding='utf-8')"
+    ],
+    "description": "Strict UTF-8 file read"
+  },
+
+  "rj": {
+    "prefix": "rj",
+    "body": [
+      "import json",
+      "from pathlib import Path",
+      "",
+      "def read(path):",
+      "    p = Path(path)",
+      "    if not p.exists(): raise FileNotFoundError(path)",
+      "    return p.read_text(encoding='utf-8')",
+      "",
+      "def readjson(path):",
+      "    return json.loads(read(path))"
+    ],
+    "description": "Read + parse JSON file"
+  },
+
+  "npinit": {
+    "prefix": "np",
+    "body": [
+      "import numpy as np",
+      "",
+      "a = np.array([1, 2, 3])",
+      "b = np.ones((3, 3))",
+      "c = np.dot(a, a)",
+      "print(f\"Dot product: {c}\")"
+    ],
+    "description": "Numpy arrays and dot product"
+  },
+
+  "pdinit": {
+    "prefix": "pd",
+    "body": [
+      "import pandas as pd",
+      "",
+      "df = pd.read_csv(\"data.csv\")",
+      "print(df.head())",
+      "print(df.describe())"
+    ],
+    "description": "Pandas CSV load + describe"
+  },
+
+  "sqlconn": {
+    "prefix": "sql",
+    "body": [
+      "import sqlite3",
+      "",
+      "conn = sqlite3.connect(\"db.sqlite3\")",
+      "cur = conn.cursor()",
+      "cur.execute(\"SELECT * FROM table LIMIT 5\")",
+      "rows = cur.fetchall()",
+      "for row in rows: print(row)",
+      "conn.close()"
+    ],
+    "description": "SQLite3 read query"
+  }
+}
