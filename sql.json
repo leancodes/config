@@ -1,0 +1,393 @@
+{
+  // === BASE SELECT ===
+  "sel": {
+    "prefix": "sel",
+    "description": "Basic SELECT FROM WHERE",
+    "body": [
+      "SELECT ${1:*}",
+      "FROM ${2:schema.table}",
+      "WHERE ${3:1=1};"
+    ]
+  },
+
+  "selcols": {
+    "prefix": "selc",
+    "description": "SELECT named columns",
+    "body": [
+      "SELECT",
+      "  ${1:t}.id,",
+      "  ${1:t}.name,",
+      "  ${1:t}.created_at",
+      "FROM ${2:schema.table} ${1:t}"
+    ]
+  },
+
+  // === JOIN BLOCKS ===
+  "join": {
+    "prefix": "join",
+    "description": "INNER JOIN template",
+    "body": [
+      "INNER JOIN ${1:schema.table} ${2:b}",
+      "  ON ${2:b}.${3:foreign_id} = ${4:a}.${5:id}"
+    ]
+  },
+
+  "ljoin": {
+    "prefix": "ljoin",
+    "description": "LEFT JOIN pattern",
+    "body": [
+      "LEFT JOIN ${1:schema.table} ${2:b}",
+      "  ON ${2:b}.${3:foreign_id} = ${4:a}.${5:id}"
+    ]
+  },
+
+  "rjoin": {
+    "prefix": "rjoin",
+    "description": "RIGHT JOIN pattern",
+    "body": [
+      "RIGHT JOIN ${1:schema.table} ${2:b}",
+      "  ON ${2:b}.${3:foreign_id} = ${4:a}.${5:id}"
+    ]
+  },
+
+  // === WHERE LOGIC ===
+  "where": {
+    "prefix": "where",
+    "description": "WHERE clause block",
+    "body": [
+      "WHERE",
+      "  ${1:col} IS NOT NULL",
+      "  AND ${2:col2} = ${3:value}"
+    ]
+  },
+
+  "filtdate": {
+    "prefix": "fdt",
+    "description": "Filter by date range",
+    "body": [
+      "WHERE",
+      "  ${1:t}.created_at >= '${2:2024-01-01}'",
+      "  AND ${1:t}.created_at < '${3:2025-01-01}'"
+    ]
+  },
+
+  "case": {
+    "prefix": "case",
+    "description": "CASE WHEN logic",
+    "body": [
+      "CASE",
+      "  WHEN ${1:condition} THEN ${2:result}",
+      "  ELSE ${3:default}",
+      "END"
+    ]
+  },
+
+  "nullsafe": {
+    "prefix": "nvl",
+    "description": "COALESCE fallback",
+    "body": [
+      "COALESCE(${1:col}, ${2:'fallback'})"
+    ]
+  },
+
+  // === CTEs ===
+  "cte": {
+    "prefix": "cte",
+    "description": "Common Table Expression",
+    "body": [
+      "WITH ${1:cte_name} AS (",
+      "  SELECT ${2:*}",
+      "  FROM ${3:schema.table}",
+      "  WHERE ${4:condition}",
+      ")",
+      "SELECT * FROM ${1};"
+    ]
+  },
+
+  "multictes": {
+    "prefix": "ctes",
+    "description": "Multiple CTEs",
+    "body": [
+      "WITH",
+      "  ${1:cte1} AS (",
+      "    SELECT * FROM ${2:table1}",
+      "  ),",
+      "  ${3:cte2} AS (",
+      "    SELECT * FROM ${4:table2}",
+      "  )",
+      "SELECT * FROM ${1}"
+    ]
+  },
+
+  // === AGGREGATION ===
+  "groupby": {
+    "prefix": "grp",
+    "description": "GROUP BY block",
+    "body": [
+      "GROUP BY",
+      "  ${1:column1},",
+      "  ${2:column2}"
+    ]
+  },
+
+  "having": {
+    "prefix": "having",
+    "description": "HAVING after group",
+    "body": [
+      "HAVING",
+      "  COUNT(${1:id}) > ${2:10}"
+    ]
+  },
+
+  "agg": {
+    "prefix": "agg",
+    "description": "Common aggregates",
+    "body": [
+      "COUNT(${1:*}),",
+      "SUM(${2:amount}),",
+      "AVG(${3:score}),",
+      "MAX(${4:maxval}),",
+      "MIN(${5:minval})"
+    ]
+  },
+
+  // === WINDOW FUNCTIONS ===
+  "rownum": {
+    "prefix": "rownum",
+    "description": "ROW_NUMBER() window",
+    "body": [
+      "ROW_NUMBER() OVER (PARTITION BY ${1:col} ORDER BY ${2:col}) AS ${3:rownum}"
+    ]
+  },
+
+  "rank": {
+    "prefix": "rank",
+    "description": "RANK() window function",
+    "body": [
+      "RANK() OVER (ORDER BY ${1:metric} DESC) AS ${2:rank}"
+    ]
+  },
+
+  "lag": {
+    "prefix": "lag",
+    "description": "LAG window function",
+    "body": [
+      "LAG(${1:col}, 1) OVER (PARTITION BY ${2:group} ORDER BY ${3:date}) AS ${4:prev_col}"
+    ]
+  },
+
+  // === PERFORMANCE HINTS ===
+  "limit": {
+    "prefix": "lim",
+    "description": "LIMIT with optional OFFSET",
+    "body": [
+      "LIMIT ${1:100} OFFSET ${2:0}"
+    ]
+  },
+
+  "analyze": {
+    "prefix": "anlz",
+    "description": "EXPLAIN ANALYZE query",
+    "body": [
+      "EXPLAIN ANALYZE",
+      "${1:SELECT * FROM table}"
+    ]
+  },
+
+  // === INSERT ===
+  "ins": {
+    "prefix": "ins",
+    "description": "INSERT INTO",
+    "body": [
+      "INSERT INTO ${1:schema.table} (",
+      "  ${2:col1}, ${3:col2}",
+      ") VALUES (",
+      "  ${4:val1}, ${5:val2}",
+      ");"
+    ]
+  },
+
+  "insr": {
+    "prefix": "insr",
+    "description": "INSERT ... RETURNING",
+    "body": [
+      "INSERT INTO ${1:schema.table} (${2:columns})",
+      "VALUES (${3:values})",
+      "RETURNING ${4:*};"
+    ]
+  },
+
+  // === UPDATE ===
+  "upd": {
+    "prefix": "upd",
+    "description": "UPDATE ... SET ... WHERE",
+    "body": [
+      "UPDATE ${1:schema.table}",
+      "SET ${2:col} = ${3:value}",
+      "WHERE ${4:condition};"
+    ]
+  },
+
+  // === DELETE ===
+  "del": {
+    "prefix": "del",
+    "description": "DELETE FROM with WHERE",
+    "body": [
+      "DELETE FROM ${1:schema.table}",
+      "WHERE ${2:condition};"
+    ]
+  },
+
+  // === UPSERT / MERGE (Postgres) ===
+  "upsert": {
+    "prefix": "upsert",
+    "description": "INSERT ... ON CONFLICT DO UPDATE",
+    "body": [
+      "INSERT INTO ${1:schema.table} (${2:col1}, ${3:col2})",
+      "VALUES (${4:val1}, ${5:val2})",
+      "ON CONFLICT (${6:key}) DO UPDATE",
+      "SET ${2:col1} = EXCLUDED.${2:col1},",
+      "    ${3:col2} = EXCLUDED.${3:col2};"
+    ]
+  },
+
+  // === TRANSACTIONS ===
+  "txn": {
+    "prefix": "txn",
+    "description": "BEGIN ... COMMIT",
+    "body": [
+      "BEGIN;",
+      "${1:-- operations here}",
+      "COMMIT;"
+    ]
+  },
+
+  "txnrollback": {
+    "prefix": "txr",
+    "description": "BEGIN with ROLLBACK fallback",
+    "body": [
+      "BEGIN;",
+      "${1:-- operations here}",
+      "-- IF error, issue:",
+      "-- ROLLBACK;",
+      "COMMIT;"
+    ]
+  },
+
+  // === ERROR HANDLING (PL/pgSQL specific) ===
+  "raise": {
+    "prefix": "raise",
+    "description": "RAISE EXCEPTION with message",
+    "body": [
+      "RAISE EXCEPTION '${1:message}';"
+    ]
+  },
+
+  "condraise": {
+    "prefix": "cra",
+    "description": "IF NOT FOUND THEN RAISE",
+    "body": [
+      "IF NOT FOUND THEN",
+      "  RAISE EXCEPTION '${1:Not found error}';",
+      "END IF;"
+    ]
+  },
+
+  // === SCHEMA INTROSPECTION ===
+  "cols": {
+    "prefix": "cols",
+    "description": "Get column names from table",
+    "body": [
+      "SELECT column_name",
+      "FROM information_schema.columns",
+      "WHERE table_schema = '${1:public}'",
+      "  AND table_name = '${2:your_table}';"
+    ]
+  },
+
+  "types": {
+    "prefix": "types",
+    "description": "Get column types for table",
+    "body": [
+      "SELECT column_name, data_type",
+      "FROM information_schema.columns",
+      "WHERE table_name = '${1:your_table}';"
+    ]
+  },
+
+  // === DATA PROFILING ===
+  "profile": {
+    "prefix": "prof",
+    "description": "Profile column for nulls, count, distinct",
+    "body": [
+      "SELECT",
+      "  COUNT(*) AS total_rows,",
+      "  COUNT(${1:col}) AS non_nulls,",
+      "  COUNT(DISTINCT ${1:col}) AS distinct_vals,",
+      "  MIN(${1:col}) AS min_val,",
+      "  MAX(${1:col}) AS max_val",
+      "FROM ${2:table};"
+    ]
+  },
+
+  "freq": {
+    "prefix": "freq",
+    "description": "Top N frequent values",
+    "body": [
+      "SELECT ${1:col}, COUNT(*) AS freq",
+      "FROM ${2:table}",
+      "GROUP BY ${1:col}",
+      "ORDER BY freq DESC",
+      "LIMIT ${3:10};"
+    ]
+  },
+
+  // === SAFE ETL JOINS ===
+  "etljoin": {
+    "prefix": "etlj",
+    "description": "LEFT JOIN with NULL checks",
+    "body": [
+      "SELECT a.*, b.${1:val} AS ${2:new_val}",
+      "FROM ${3:source} a",
+      "LEFT JOIN ${4:dim_table} b",
+      "  ON a.${5:key} = b.${6:key}",
+      "WHERE b.${1:val} IS NOT NULL;"
+    ]
+  },
+
+  "nullfilter": {
+    "prefix": "nfltr",
+    "description": "Filter out rows with any NULLs",
+    "body": [
+      "SELECT *",
+      "FROM ${1:table}",
+      "WHERE",
+      "  ${2:col1} IS NOT NULL",
+      "  AND ${3:col2} IS NOT NULL"
+    ]
+  },
+
+  "dedup": {
+    "prefix": "dedup",
+    "description": "De-duplicate using ROW_NUMBER",
+    "body": [
+      "WITH ranked AS (",
+      "  SELECT *,",
+      "    ROW_NUMBER() OVER (PARTITION BY ${1:key} ORDER BY ${2:timestamp} DESC) AS rn",
+      "  FROM ${3:table}",
+      ")",
+      "SELECT * FROM ranked WHERE rn = 1;"
+    ]
+  },
+
+  // === COMMENT / LABEL ===
+  "comment": {
+    "prefix": "cmt",
+    "description": "SQL block comment",
+    "body": [
+      "-- ======================================",
+      "-- ${1:Section Description}",
+      "-- ======================================"
+    ]
+  }
+}
