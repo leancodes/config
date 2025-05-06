@@ -1,126 +1,216 @@
 {
-  "ctor": {
-    "prefix": "ctor",
+  // === PROPERTIES ===
+  "pplet": {
+    "prefix": "pplet",
+    "description": "Property Let/Get with backing field and docstring",
     "body": [
-      "Private Sub Class_Initialize()",
-      "  ${1:' Initialize fields, dependencies, etc.}",
-      "End Sub",
+      "Private m${1:Prop} As ${2:Type}",
+      "Public Property Let $1(ByVal v As $2)",
+      "Attribute $1.VB_Description = \"${3:Description}.\"",
+      "    m$1 = v",
+      "End Property",
       "",
-      "Private Sub Class_Terminate()",
-      "  ${2:' Cleanup, release objects if needed}",
-      "End Sub"
-    ],
-    "description": "Class constructor and destructor"
+      "Public Property Get $1() As $2",
+      "    $1 = m$1",
+      "End Property"
+    ]
   },
 
-  "errwrap": {
-    "prefix": "errwrap",
+  "ppset": {
+    "prefix": "ppset",
+    "description": "Property Set/Get for object references",
     "body": [
-      "Function WrapError(ByVal fnName As String, ByVal block As String) As Boolean",
-      "  On Error GoTo errh",
-      "  Application.VBE.ActiveVBProject.VBComponents(fnName).CodeModule.InsertLines 1, block",
-      "  WrapError = True",
-      "  Exit Function",
-      "errh:",
-      "  Debug.Print \"[\" & fnName & \"] \" & Err.Number & \": \" & Err.Description",
-      "  WrapError = False",
-      "End Function"
-    ],
-    "description": "Reusable error execution wrapper"
+      "Private m${1:Prop} As ${2:Type}",
+      "Public Property Set $1(ByVal v As $2)",
+      "Attribute $1.VB_Description = \"${3:Description}.\"",
+      "    Set m$1 = v",
+      "End Property",
+      "",
+      "Public Property Get $1() As $2",
+      "    Set $1 = m$1",
+      "End Property"
+    ]
   },
 
+  "ppget": {
+    "prefix": "ppget",
+    "description": "Read-only property",
+    "body": [
+      "Public Property Get ${1:Prop}() As ${2:Type}",
+      "Attribute $1.VB_Description = \"${3:Description}.\"",
+      "    $0",
+      "End Property"
+    ]
+  },
+
+  // === PROCEDURES ===
+  "subr": {
+    "prefix": "subr",
+    "description": "Documented Subroutine",
+    "body": [
+      "Option Explicit",
+      "Public Sub ${1:Proc}(${2:args})",
+      "Attribute $1.VB_Description = \"${3:Description}.\"",
+      "    $0",
+      "End Sub"
+    ]
+  },
+
+  "func": {
+    "prefix": "func",
+    "description": "Documented Function",
+    "body": [
+      "Option Explicit",
+      "Public Function ${1:Func}(${2:args}) As ${3:ReturnType}",
+      "Attribute $1.VB_Description = \"${4:Description}.\"",
+      "    Dim result As $3",
+      "    $0",
+      "    $1 = result",
+      "End Function"
+    ]
+  },
+
+  // === ERROR HANDLING ===
+  "tryh": {
+    "prefix": "tryh",
+    "description": "Procedure with error handling block",
+    "body": [
+      "Sub ${1:ProcName}()",
+      "    On Error GoTo errh",
+      "    $0",
+      "exith:",
+      "    Exit Sub",
+      "errh:",
+      "    Debug.Print \"[\" & Err.Number & \"]: \" & Err.Description",
+      "    Resume exith",
+      "End Sub"
+    ]
+  },
+
+  // === TESTING ===
   "assert": {
     "prefix": "assert",
+    "description": "Basic assertion helper",
     "body": [
-      "Sub AssertEquals(ByVal expected As Variant, ByVal actual As Variant, ByVal msg As String)",
-      "  If expected <> actual Then",
-      "    Debug.Print \"ASSERT FAILED: \" & msg & \" | Expected: \" & expected & \", Got: \" & actual",
-      "  Else",
-      "    Debug.Print \"PASS: \" & msg",
-      "  End If",
+      "Sub AssertEquals(expected As Variant, actual As Variant, msg As String)",
+      "    If expected <> actual Then",
+      "        Debug.Print \"FAIL: \" & msg & \" | Expected: \" & expected & \" Got: \" & actual",
+      "    Else",
+      "        Debug.Print \"PASS: \" & msg",
+      "    End If",
       "End Sub"
-    ],
-    "description": "Manual assertion for testing"
+    ]
   },
 
-  "enum": {
-    "prefix": "enum",
+  // === EXCEL SPECIFIC ===
+  "xloopr": {
+    "prefix": "xloopr",
+    "description": "Loop through Excel range",
     "body": [
-      "Enum ${1:EnumName}",
-      "  ${2:Value1} = ${3:0}",
-      "  ${4:Value2}",
-      "  ${5:Value3}",
-      "End Enum"
-    ],
-    "description": "Enum declaration block"
+      "Dim cell As Range",
+      "For Each cell In ${1:Sheet1}.Range(\"${2:A1:A10}\")",
+      "    $0",
+      "Next cell"
+    ]
   },
 
-  "rangefor": {
-    "prefix": "rangefor",
+  // === UTILITIES ===
+  "logm": {
+    "prefix": "logm",
+    "description": "Log message with timestamp",
     "body": [
-      "Dim ${1:cell} As Range",
-      "For Each ${1} In ${2:Sheet1.Range(\"A1:A10\")}",
-      "  ${3:'...}",
-      "Next ${1}"
-    ],
-    "description": "Excel Range For Each loop"
+      "Sub Log(msg As String)",
+      "    Debug.Print Now & \" - \" & msg",
+      "End Sub"
+    ]
   },
 
-  "dictloop": {
-    "prefix": "dictloop",
-    "body": [
-      "Dim ${1:key} As Variant",
-      "For Each ${1} In ${2:myDict}.Keys",
-      "  Debug.Print ${1}, ${2}.Item(${1})",
-      "Next ${1}"
-    ],
-    "description": "Loop over Scripting.Dictionary keys"
-  },
-
-  "fileread": {
-    "prefix": "fileread",
+  "fread": {
+    "prefix": "fread",
+    "description": "Read entire text file",
     "body": [
       "Dim fso As Object, ts As Object",
       "Set fso = CreateObject(\"Scripting.FileSystemObject\")",
-      "Set ts = fso.OpenTextFile(\"${1:filepath}\", 1)",
+      "Set ts = fso.OpenTextFile(\"${1:path}\", 1)",
       "Dim content As String",
       "content = ts.ReadAll",
       "ts.Close"
-    ],
-    "description": "Read full file into string (FSO)"
+    ]
   },
 
-  "jsonparse": {
-    "prefix": "jsonparse",
+  // === FLOW CONTROL ===
+  "loopf": {
+    "prefix": "loopf",
+    "description": "Standard For loop",
     "body": [
-      "Dim json As Object",
-      "Set json = JsonConverter.ParseJson(${1:jsonString})",
-      "${2:' Use json(\"key\") to access }"
-    ],
-    "description": "Parse JSON string into dictionary (requires VBA-JSON)"
+      "Dim ${1:i} As Long",
+      "For $1 = ${2:1} To ${3:10}",
+      "    $0",
+      "Next $1"
+    ]
   },
 
-  "mock": {
-    "prefix": "mock",
+  "loopi": {
+    "prefix": "loopi",
+    "description": "For Each loop",
     "body": [
-      "Sub ${1:MockedSub}()",
-      "  Debug.Print \"[Mocked] ${1} called\"",
+      "For Each ${1:item} In ${2:collection}",
+      "    $0",
+      "Next $1"
+    ]
+  },
+
+  "ifb": {
+    "prefix": "ifb",
+    "description": "If block",
+    "body": [
+      "If ${1:condition} Then",
+      "    $0",
+      "End If"
+    ]
+  },
+
+  "ifel": {
+    "prefix": "ifel",
+    "description": "If...Else block",
+    "body": [
+      "If ${1:condition} Then",
+      "    $0",
+      "Else",
+      "End If"
+    ]
+  },
+
+  "case": {
+    "prefix": "case",
+    "description": "Select Case",
+    "body": [
+      "Select Case ${1:expr}",
+      "    Case ${2:val}",
+      "        $0",
+      "    Case Else",
+      "End Select"
+    ]
+  },
+
+  // === CLASS LIFECYCLE ===
+  "ctor": {
+    "prefix": "ctor",
+    "description": "Class_Initialize",
+    "body": [
+      "Private Sub Class_Initialize()",
+      "    $0",
       "End Sub"
-    ],
-    "description": "Stub/mock sub for testing"
+    ]
   },
 
-  "testa": {
-    "prefix": "testa",
+  "dtor": {
+    "prefix": "dtor",
+    "description": "Class_Terminate",
     "body": [
-      "Sub Test_${1:Func}()",
-      "  Dim actual As Variant",
-      "  Dim expected As Variant",
-      "  expected = ${2:Expected}",
-      "  actual = ${1}(${3:Args})",
-      "  Call AssertEquals(expected, actual, \"${1}\")",
+      "Private Sub Class_Terminate()",
+      "    $0",
       "End Sub"
-    ],
-    "description": "Test wrapper with assert"
+    ]
   }
 }
