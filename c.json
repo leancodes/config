@@ -1,0 +1,270 @@
+{
+  // === HEADERS ===
+  "inc": {
+    "prefix": "inc",
+    "description": "Standard includes",
+    "body": [
+      "#include <stdio.h>",
+      "#include <stdlib.h>",
+      "#include <string.h>",
+      "#include <assert.h>"
+    ]
+  },
+  "main": {
+    "prefix": "main",
+    "description": "Main function",
+    "body": [
+      "int main(int argc, char *argv[]) {",
+      "    $0",
+      "    return 0;",
+      "}"
+    ]
+  },
+
+  // === FUNCTIONS ===
+  "func": {
+    "prefix": "func",
+    "description": "Generic function with return",
+    "body": [
+      "${1:void} ${2:func_name}(${3:void}) {",
+      "    $0",
+      "}"
+    ]
+  },
+  "funcd": {
+    "prefix": "funcd",
+    "description": "Function with doc comment",
+    "body": [
+      "/*",
+      " * ${1:FunctionName} - ${2:description}",
+      " *",
+      " * Args:",
+      " *   ${3:void}",
+      " *",
+      " * Returns:",
+      " *   ${4:void}",
+      " */",
+      "${4:void} ${1}(${3}) {",
+      "    $0",
+      "}"
+    ]
+  },
+
+  // === ERROR HANDLING ===
+  "chk": {
+    "prefix": "chk",
+    "description": "Null check with exit",
+    "body": [
+      "if (${1:ptr} == NULL) {",
+      "    fprintf(stderr, \"Error: ${2:failure}\\n\");",
+      "    exit(EXIT_FAILURE);",
+      "}"
+    ]
+  },
+  "chkret": {
+    "prefix": "chkret",
+    "description": "Condition check with return",
+    "body": [
+      "if (${1:condition}) {",
+      "    fprintf(stderr, \"${2:Error message}\\n\");",
+      "    return ${3:retval};",
+      "}"
+    ]
+  },
+  "perrx": {
+    "prefix": "perrx",
+    "description": "perror with exit",
+    "body": [
+      "perror(\"${1:label}\");",
+      "exit(EXIT_FAILURE);"
+    ]
+  },
+
+  // === LOGGING & DEBUG ===
+  "logd": {
+    "prefix": "logd",
+    "description": "Debug log to stderr",
+    "body": [
+      "fprintf(stderr, \"[DEBUG] ${1:msg}\\n\");"
+    ]
+  },
+  "warn": {
+    "prefix": "warn",
+    "description": "Warning message",
+    "body": [
+      "fprintf(stderr, \"[WARNING] ${1:msg}\\n\");"
+    ]
+  },
+
+  // === ASSERTIONS ===
+  "assert": {
+    "prefix": "assert",
+    "description": "Runtime assertion",
+    "body": [
+      "assert(${1:condition});"
+    ]
+  },
+  "assertm": {
+    "prefix": "assertm",
+    "description": "Manual assertion with message",
+    "body": [
+      "if (!(${1:condition})) {",
+      "    fprintf(stderr, \"Assertion failed: ${2:message}\\n\");",
+      "    exit(EXIT_FAILURE);",
+      "}"
+    ]
+  },
+
+  // === MEMORY ===
+  "alloc": {
+    "prefix": "alloc",
+    "description": "Safe malloc",
+    "body": [
+      "${1:type} *${2:ptr} = (${1:type} *)malloc(${3:count} * sizeof(${1:type}));",
+      "if ($2 == NULL) {",
+      "    perror(\"malloc\");",
+      "    exit(EXIT_FAILURE);",
+      "}"
+    ]
+  },
+  "freez": {
+    "prefix": "freez",
+    "description": "Safe free and nullify",
+    "body": [
+      "if (${1:ptr}) {",
+      "    free($1);",
+      "    $1 = NULL;",
+      "}"
+    ]
+  },
+  // === CONTROL FLOW ===
+  "fori": {
+    "prefix": "fori",
+    "description": "For loop",
+    "body": [
+      "for (int ${1:i} = 0; $1 < ${2:n}; $1++) {",
+      "    $0",
+      "}"
+    ]
+  },
+  "while": {
+    "prefix": "while",
+    "description": "While loop",
+    "body": [
+      "while (${1:condition}) {",
+      "    $0",
+      "}"
+    ]
+  },
+  "dowhile": {
+    "prefix": "dowhile",
+    "description": "Do-while loop",
+    "body": [
+      "do {",
+      "    $0",
+      "} while (${1:condition});"
+    ]
+  },
+  "switch": {
+    "prefix": "switch",
+    "description": "Switch-case block",
+    "body": [
+      "switch (${1:expr}) {",
+      "    case ${2:val}:",
+      "        $0",
+      "        break;",
+      "    default:",
+      "        break;",
+      "}"
+    ]
+  },
+  "ret0": {
+    "prefix": "ret0",
+    "description": "Early return 0",
+    "body": [
+      "return 0;"
+    ]
+  },
+
+  // === STRUCTS / ENUMS / TYPEDEFS ===
+  "struct": {
+    "prefix": "struct",
+    "description": "Struct declaration",
+    "body": [
+      "typedef struct {",
+      "    ${1:int id;}",
+      "} ${2:TypeName};"
+    ]
+  },
+  "enum": {
+    "prefix": "enum",
+    "description": "Enum declaration",
+    "body": [
+      "typedef enum {",
+      "    ${1:ITEM_ONE},",
+      "    ${2:ITEM_TWO}",
+      "} ${3:EnumType};"
+    ]
+  },
+  "typedef": {
+    "prefix": "typedef",
+    "description": "Typedef alias",
+    "body": [
+      "typedef ${1:unsigned int} ${2:Alias};"
+    ]
+  },
+
+  // === FILE I/O ===
+  "fopen": {
+    "prefix": "fopen",
+    "description": "Open file with error check",
+    "body": [
+      "FILE *${1:fp} = fopen(\"${2:filename}\", \"${3:r}\");",
+      "if ($1 == NULL) {",
+      "    perror(\"fopen\");",
+      "    exit(EXIT_FAILURE);",
+      "}"
+    ]
+  },
+  "fread": {
+    "prefix": "fread",
+    "description": "Read file line by line",
+    "body": [
+      "char ${1:line}[${2:256}];",
+      "while (fgets($1, sizeof($1), ${3:fp})) {",
+      "    $0",
+      "}"
+    ]
+  },
+  "fclose": {
+    "prefix": "fclose",
+    "description": "Safe file close",
+    "body": [
+      "if (${1:fp}) {",
+      "    fclose($1);",
+      "    $1 = NULL;",
+      "}"
+    ]
+  },
+
+  // === MODULARIZATION ===
+  "hdrguard": {
+    "prefix": "hdrguard",
+    "description": "Header include guard",
+    "body": [
+      "#ifndef ${1:HEADER_NAME}_H",
+      "#define $1_H",
+      "",
+      "$0",
+      "",
+      "#endif // $1_H"
+    ]
+  },
+  "decl": {
+    "prefix": "decl",
+    "description": "Function declaration in header",
+    "body": [
+      "${1:void} ${2:func}(${3:void});"
+    ]
+  }
+}
